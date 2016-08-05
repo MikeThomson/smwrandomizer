@@ -5,6 +5,8 @@ var EN_US = false;
 var __SMWC = true;
 
 var DEVMODE = window.location.href.indexOf('localhost') != -1;
+DEVMODE = true; // leaving in the above for now, trying to keep as merge compatible as possible for now
+LOCALMODE = window && window.process && window.process.type;
 
 function doRandomize(buffer, seed)
 {
@@ -20,7 +22,11 @@ function doRandomize(buffer, seed)
 		var prefix = 'smw-' + VERSION_STRING;
 
 		$('#setgoal-text').val('.setgoal Randomizer ' + VERSION_STRING + ' ' + category + ' - ' + url);
-		saveAs(new Blob([result.buffer], {type: "octet/stream"}), prefix + '-' + result.seed + result.type);
+		if(LOCALMODE) {
+			saveRom(result.buffer, prefix + '-' + result.seed + result.type);
+		} else {
+			saveAs(new Blob([result.buffer], {type: "octet/stream"}), prefix + '-' + result.seed + result.type);
+		}
 
         $('#generation-time').remove();
         $('body').append($('<div id="generation-time">').html('&Delta;' + (+new Date() - __start) + "ms"));
